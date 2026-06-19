@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>車を手放して東京へ（大井町・車なし生活）シミュレーター</title>
+<style>
+  :root{--line:#2e3d54;--txt:#e8eef7;--sub:#9fb0c8;--accent:#4ea1ff;--good:#36d399;--warn:#ffb454;--danger:#ff6b6b;--card:#1a2433}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Hiragino Sans","Yu Gothic UI",-apple-system,"Segoe UI",sans-serif;background:linear-gradient(160deg,#0c121b,#13202f);color:var(--txt);line-height:1.6;padding:16px}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{font-size:1.3rem;margin:.2em 0 .1em}
+  h2{font-size:1.05rem;margin:1.5em 0 .6em;padding-left:.5em;border-left:4px solid var(--accent)}
+  .step{font-size:.7rem;color:var(--accent);font-weight:700}
+  .lead{color:var(--sub);font-size:.9rem;margin-bottom:1.2em}
+  .nav{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .nav a{font-size:.82rem;padding:7px 12px;border-radius:999px;border:1px solid var(--line);color:var(--sub);text-decoration:none}
+  .nav a.on{background:var(--accent);color:#06121f;border-color:var(--accent);font-weight:700}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+  .grid{display:grid;gap:12px}
+  @media(min-width:720px){.cols-2{grid-template-columns:1fr 1fr}}
+  label{display:block;font-size:.78rem;color:var(--sub);margin:0 0 4px}
+  .field{margin-bottom:12px}
+  input[type=number]{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#0e1722;color:var(--txt);font-size:1rem;font-weight:600}
+  input:focus{outline:2px solid var(--accent);border-color:var(--accent)}
+  .unit{font-size:.75rem;color:var(--sub);margin-left:4px}
+  .chk{display:flex;align-items:center;gap:8px;font-size:.85rem;margin:8px 0}.chk input{width:auto}
+  .result-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px}
+  .badge{font-size:.7rem;padding:3px 8px;border-radius:999px;font-weight:700;background:#2c4a3c;color:#bff0d6}
+  table{width:100%;border-collapse:collapse;font-size:.86rem}
+  td,th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:right}
+  th:first-child,td:first-child{text-align:left;color:var(--sub)}
+  .row-strong td{font-weight:800;font-size:.98rem;border-bottom:2px solid var(--accent)}
+  .row-sub td{color:var(--sub);font-size:.8rem}
+  .net-pos{color:var(--good)}.net-neg{color:var(--danger)}
+  .note{font-size:.8rem;color:var(--sub);background:rgba(255,255,255,.03);border-left:3px solid var(--warn);padding:10px 12px;border-radius:0 8px 8px 0;margin-top:10px}
+  .note.good{border-left-color:var(--good)}
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;background:#1d2c40;color:#9fb0c8;font-size:.7rem;margin:0 4px 4px 0}
+  .big{font-size:1.7rem;font-weight:800}.big.good{color:var(--good)}.big.warn{color:var(--warn)}
+  .foot{font-size:.72rem;color:#6f819c;margin-top:24px;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="nav">
+    <a href="index.html">🚗 新車買替＆ローン</a>
+    <a href="tokyo.html" class="on">🚆 車を手放して東京へ</a>
+  </div>
+
+  <h1>🚆 車を手放して東京（大井町）へ引っ越すパターン</h1>
+  <p class="lead">全損を機に「新車を買わず・車を手放して大井町で車なし生活」を選んだ場合の収支を試算します。
+    現在地（茨城県神栖市）から東京への転居前提。<span class="pill">家賃補助3万</span><span class="pill">引越補助10万</span></p>
+
+  <div class="card" style="background:linear-gradient(135deg,#3a2330,#2a1f2f);border-color:#6b2b46">
+    <div class="result-head"><strong>⚠ 重要な保険ポイント</strong></div>
+    <div class="note danger" style="border-left-color:var(--danger);color:#ffd0d0">
+      車を<b>買い替えない</b>と<b>新車買替特約380万は使えません</b>。受け取れるのは<b>車両保険330万（現金）</b>です（差50万）。
+      ただし車を持たないことで、ローン・任意保険・ガソリン・駐車場・税金・車検が<b>丸ごと不要</b>になります。この一時金の差50万を、毎月の車コスト削減が何ヶ月で取り返すかが判断の核です。
+    </div>
+  </div>
+
+  <!-- STEP1 保険精算 -->
+  <h2><span class="step">STEP 1</span>　保険金の精算（車を手放す）</h2>
+  <div class="card">
+    <div class="grid cols-2">
+      <div class="field"><label>車両保険（現金・新車買替は使わない）</label>
+        <input type="number" id="payout" value="330"><span class="unit">万円</span></div>
+      <div class="field"><label>事故時点のローン残債</label>
+        <input type="number" id="debt" value="180"><span class="unit">万円</span></div>
+      <div class="field"><label>車両全損時諸費用特約 上乗せ（目安10〜20万）</label>
+        <input type="number" id="extraIns" value="15"><span class="unit">万円</span></div>
+    </div>
+    <label class="chk"><input type="checkbox" id="menZero" checked> 全損時は免責5万が引かれない約款（要確認）</label>
+    <table id="settle"></table>
+    <div class="note good">保険金は<b>非課税</b>。残債清算後の現金が、引っ越し費用と当面の生活防衛資金になります。
+      所有権留保（車検証の所有者がローン会社）の場合は廃車・抹消に所有者の書類が必要です。</div>
+  </div>
+
+  <!-- STEP2 引っ越し初期費用 -->
+  <h2><span class="step">STEP 2</span>　引っ越しの初期費用</h2>
+  <div class="card">
+    <div class="grid cols-2">
+      <div class="field"><label>家賃（大井町 1K/1R 相場8〜11万）</label>
+        <input type="number" id="rent" value="9"><span class="unit">万円 / 月</span></div>
+      <div class="field"><label>初期費用（敷金・礼金・仲介・前家賃・保証/火災）目安 家賃4〜5ヶ月</label>
+        <input type="number" id="initFee" value="42"><span class="unit">万円</span></div>
+      <div class="field"><label>引越業者（茨城→東京・単身）目安5〜10万</label>
+        <input type="number" id="moverFee" value="8"><span class="unit">万円</span></div>
+      <div class="field"><label>引っ越し補助金</label>
+        <input type="number" id="moveSubsidy" value="10"><span class="unit">万円</span></div>
+    </div>
+    <table id="initTable"></table>
+  </div>
+
+  <!-- STEP3 月次家計 -->
+  <h2><span class="step">STEP 3</span>　毎月の家計（車なし vs 車あり）</h2>
+  <div class="card">
+    <div class="grid cols-2">
+      <div class="field"><label>月給（額面）</label>
+        <input type="number" id="salary" value="35"><span class="unit">万円</span></div>
+      <div class="field"><label>残業代（月平均）</label>
+        <input type="number" id="overtime" value="5"><span class="unit">万円</span></div>
+      <div class="field"><label>手取り率（額面に対する目安 約78〜80%）</label>
+        <input type="number" id="takeHome" value="79"><span class="unit">%</span></div>
+      <div class="field"><label>家賃補助</label>
+        <input type="number" id="rentSubsidy" value="3"><span class="unit">万円 / 月</span></div>
+    </div>
+    <details><summary>車を持つ場合の月コスト内訳（車なしで浮く額）</summary>
+      <div class="grid cols-2" style="margin-top:10px">
+        <div class="field"><label>新ローン返済</label><input type="number" id="cLoan" value="4.6"><span class="unit">万/月</span></div>
+        <div class="field"><label>任意保険（事故後・等級ダウン）</label><input type="number" id="cIns" value="1.2"><span class="unit">万/月</span></div>
+        <div class="field"><label>ガソリン</label><input type="number" id="cGas" value="1.5"><span class="unit">万/月</span></div>
+        <div class="field"><label>駐車場</label><input type="number" id="cPark" value="0.8"><span class="unit">万/月</span></div>
+        <div class="field"><label>自動車税・車検・メンテ積立</label><input type="number" id="cMaint" value="1.4"><span class="unit">万/月</span></div>
+      </div>
+    </details>
+    <div class="field"><label>東京での通勤定期（会社負担なら0）</label>
+      <input type="number" id="commute" value="0"><span class="unit">万/月</span></div>
+    <div class="field"><label>現在の住居費（神栖・実家や持ち家なら0〜）</label>
+      <input type="number" id="curHousing" value="3"><span class="unit">万/月</span></div>
+    <table id="monthlyTable"></table>
+  </div>
+
+  <!-- 結論 -->
+  <h2><span class="step">結論</span>　車なし東京生活の収支と損益分岐</h2>
+  <div class="card" id="verdict"></div>
+
+  <p class="foot">
+    ※相場（家賃・初期費用・車関連コスト・手取り率）は<b>目安</b>です。大井町1K/1Rの家賃相場は約8〜11万（2026年・首都圏は上昇傾向）。
+    保険金は車両保険330万・諸費用特約・残債は<a href="index.html" style="color:var(--accent)">新車買替ページ</a>と同じ証券前提（A017318307）。
+    新車買替特約380万は「新車に買い替える」場合のみ。手放す本パターンでは適用されません。<br>
+    通勤定期は勤務先規定により会社負担が一般的。家賃補助・引越補助は勤務先制度の前提です。
+  </p>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const yen=n=>Math.round(n).toLocaleString('ja-JP');
+const man=n=>(Math.round(n*100)/100).toLocaleString('ja-JP');
+
+function calc(){
+  // STEP1
+  const payout=+$('payout').value, debt=+$('debt').value, extraIns=+$('extraIns').value;
+  const menseki=$('menZero').checked?0:5;
+  const handed=payout-menseki+extraIns-debt; // 万
+  $('settle').innerHTML=`
+    <tr><td>車両保険（現金受取）</td><td>${man(payout)} 万</td></tr>
+    <tr class="row-sub"><td>免責${menseki?'':'（全損時ゼロ）'}</td><td>${menseki?('−'+menseki+' 万'):'0 万'}</td></tr>
+    <tr><td>車両全損時諸費用特約</td><td class="net-pos">+${man(extraIns)} 万</td></tr>
+    <tr><td>ローン残債の清算</td><td class="net-neg">−${man(debt)} 万</td></tr>
+    <tr class="row-strong"><td>保険金の手残り（現金）</td><td class="${handed>=0?'net-pos':'net-neg'}">${handed>=0?'+':'−'}${man(Math.abs(handed))} 万円</td></tr>`;
+
+  // STEP2
+  const rent=+$('rent').value, initFee=+$('initFee').value, moverFee=+$('moverFee').value, moveSubsidy=+$('moveSubsidy').value;
+  const moveCost=initFee+moverFee-moveSubsidy; // 万
+  const afterMove=handed-moveCost;
+  $('initTable').innerHTML=`
+    <tr><td>初期費用（敷金礼金・前家賃ほか）</td><td class="net-neg">−${man(initFee)} 万</td></tr>
+    <tr><td>引越業者</td><td class="net-neg">−${man(moverFee)} 万</td></tr>
+    <tr><td>引っ越し補助金</td><td class="net-pos">+${man(moveSubsidy)} 万</td></tr>
+    <tr class="row-strong"><td>引っ越しの実質コスト</td><td class="net-neg">−${man(moveCost)} 万円</td></tr>
+    <tr class="row-sub"><td>保険手残りから差引後の現金</td><td>${afterMove>=0?'+':'−'}${man(Math.abs(afterMove))} 万円</td></tr>`;
+
+  // STEP3
+  const salary=+$('salary').value, overtime=+$('overtime').value, takeHome=+$('takeHome').value/100;
+  const grossM=salary+overtime;
+  const netIncome=grossM*takeHome; // 手取り 万
+  const rentSubsidy=+$('rentSubsidy').value;
+  const netRent=rent-rentSubsidy; // 実質家賃
+  const commute=+$('commute').value, curHousing=+$('curHousing').value;
+  const carCost=(+$('cLoan').value)+(+$('cIns').value)+(+$('cGas').value)+(+$('cPark').value)+(+$('cMaint').value); // 車あり月コスト
+  // 車なし東京: 住居費が curHousing → netRent に変化、車コスト0、通勤定期
+  const housingDelta=netRent-curHousing; // 住居費の増分
+  const monthlySaveVsCar=carCost-housingDelta-commute; // 車ありと比べ毎月浮く額
+  $('monthlyTable').innerHTML=`
+    <tr><td>手取り月収（額面${man(grossM)}万×${Math.round(takeHome*100)}%）</td><td class="net-pos">${man(netIncome)} 万</td></tr>
+    <tr><td>大井町 家賃</td><td class="net-neg">−${man(rent)} 万</td></tr>
+    <tr class="row-sub"><td>家賃補助</td><td class="net-pos">+${man(rentSubsidy)} 万</td></tr>
+    <tr class="row-sub"><td>実質家賃</td><td>−${man(netRent)} 万</td></tr>
+    <tr><td>通勤定期（自己負担分）</td><td class="net-neg">−${man(commute)} 万</td></tr>
+    <tr><td>車関連コスト（車なし）</td><td class="net-pos">0 万</td></tr>
+    <tr class="row-sub"><td>（参考）車を持つ場合の月コスト</td><td>−${man(carCost)} 万</td></tr>
+    <tr class="row-strong"><td>車ありと比べ毎月浮く額</td><td class="${monthlySaveVsCar>=0?'net-pos':'net-neg'}">${monthlySaveVsCar>=0?'+':'−'}${man(Math.abs(monthlySaveVsCar))} 万円 / 月</td></tr>`;
+
+  // 結論：損益分岐 & N年累計
+  const lumpGap=50; // 新車買替380 vs 現金330 の一時金差（万）
+  const breakeven = monthlySaveVsCar>0 ? lumpGap/monthlySaveVsCar : Infinity;
+  function projection(years){
+    return afterMove + monthlySaveVsCar*12*years; // 車なし東京の累計現金（保険手残り起点）
+  }
+  const y3=projection(3), y5=projection(5);
+  $('verdict').innerHTML=`
+    <div class="result-head"><strong>💡 判定</strong><span class="badge">車なし・大井町</span></div>
+    <table>
+      <tr><td>引っ越し直後の手元現金</td><td class="${afterMove>=0?'net-pos':'net-neg'}">${afterMove>=0?'+':'−'}${man(Math.abs(afterMove))} 万円</td></tr>
+      <tr><td>車を持つ場合より毎月浮く額</td><td class="net-pos">+${man(monthlySaveVsCar)} 万 / 月（年 ${man(monthlySaveVsCar*12)}万）</td></tr>
+      <tr><td>新車買替を諦めた一時金差（380→330）</td><td class="net-neg">−${lumpGap} 万円</td></tr>
+      <tr class="row-strong"><td>その50万差を取り返す期間</td><td>${isFinite(breakeven)?('約 '+man(breakeven)+' ヶ月'):'—'}</td></tr>
+      <tr class="row-sub"><td>3年後の累計現金（保険手残り起点）</td><td>${man(y3)} 万円</td></tr>
+      <tr class="row-sub"><td>5年後の累計現金</td><td>${man(y5)} 万円</td></tr>
+    </table>
+    <div class="note good">${monthlySaveVsCar>0
+      ? `車を手放すと毎月 <b>${man(monthlySaveVsCar)}万円</b>浮き、新車買替を諦めた一時金差50万は<b>約${man(breakeven)}ヶ月</b>で取り返せます。それ以降は車を持つより毎年 <b>${man(monthlySaveVsCar*12)}万円</b>ずつ手元に残ります。大井町は品川・都心へのアクセスが良く、車なしでも生活が成立しやすいエリアです。`
+      : `現在の住居費が安い／東京の家賃増が大きく、車なしでも毎月の余裕は出にくい設定です。家賃・現住居費・車コストの前提を見直してください。`}</div>
+    <div class="note">注意：通勤定期が自己負担だと収支が変わります。引っ越し補助・家賃補助は勤務先制度が前提。
+      車が必要な場面（帰省・レジャー）はレンタカー/カーシェアで代替（月1〜2回なら車保有よりはるかに安価）。</div>`;
+}
+document.querySelectorAll('input').forEach(el=>el.addEventListener('input',calc));
+$('menZero').addEventListener('change',calc);
+calc();
+</script>
+</body>
+</html>
