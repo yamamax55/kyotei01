@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自動車保険×ローン残債 シミュレーター（&e カローラクロス）</title>
+<style>
+  :root{
+    --bg:#0f1620; --card:#1a2433; --card2:#22304a; --line:#2e3d54;
+    --txt:#e8eef7; --sub:#9fb0c8; --accent:#4ea1ff; --accent2:#36d399;
+    --warn:#ffb454; --danger:#ff6b6b; --good:#36d399;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:"Hiragino Sans","Yu Gothic UI",-apple-system,"Segoe UI",sans-serif;
+    background:linear-gradient(160deg,#0c121b,#13202f); color:var(--txt);
+    line-height:1.6; padding:16px;
+  }
+  .wrap{max-width:1080px; margin:0 auto}
+  h1{font-size:1.35rem; margin:.2em 0 .1em}
+  h2{font-size:1.05rem; margin:1.4em 0 .6em; padding-left:.5em; border-left:4px solid var(--accent)}
+  .lead{color:var(--sub); font-size:.9rem; margin-bottom:1.2em}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:16px}
+  .grid{display:grid; gap:12px}
+  @media(min-width:720px){.cols-2{grid-template-columns:1fr 1fr}.cols-3{grid-template-columns:1fr 1fr 1fr}}
+  /* 保険証サマリ */
+  .policy{background:linear-gradient(135deg,#15263d,#1a2f4d); border:1px solid #2b466b}
+  .policy-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px}
+  .kv{background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:10px; padding:8px 10px}
+  .kv .k{font-size:.72rem; color:var(--sub)}
+  .kv .v{font-size:1.05rem; font-weight:700}
+  .kv .v small{font-size:.7rem; color:var(--sub); font-weight:400}
+  /* 入力 */
+  label{display:block; font-size:.78rem; color:var(--sub); margin:0 0 4px}
+  .field{margin-bottom:12px}
+  input[type=number]{
+    width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--line);
+    background:#0e1722; color:var(--txt); font-size:1rem; font-weight:600;
+  }
+  input:focus{outline:2px solid var(--accent); border-color:var(--accent)}
+  .unit{font-size:.75rem; color:var(--sub); margin-left:4px}
+  .seg{display:flex; gap:6px; flex-wrap:wrap}
+  .seg button{
+    flex:1; min-width:80px; padding:9px 6px; border-radius:10px; border:1px solid var(--line);
+    background:#0e1722; color:var(--sub); font-weight:700; cursor:pointer; font-size:.85rem;
+  }
+  .seg button.on{background:var(--accent); color:#06121f; border-color:var(--accent)}
+  /* 結果 */
+  .result-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-bottom:6px}
+  .badge{font-size:.7rem; padding:3px 8px; border-radius:999px; font-weight:700}
+  .b-a{background:#26425f; color:#bfe0ff}
+  .b-b{background:#2c4a3c; color:#bff0d6}
+  .big{font-size:1.6rem; font-weight:800}
+  .big.good{color:var(--good)} .big.warn{color:var(--warn)} .big.danger{color:var(--danger)}
+  table{width:100%; border-collapse:collapse; font-size:.86rem}
+  td,th{padding:7px 6px; border-bottom:1px solid var(--line); text-align:right}
+  th:first-child,td:first-child{text-align:left; color:var(--sub)}
+  .row-strong td{font-weight:800; font-size:.95rem; border-bottom:2px solid var(--accent)}
+  .net-pos{color:var(--good)} .net-neg{color:var(--danger)}
+  .note{font-size:.8rem; color:var(--sub); background:rgba(255,255,255,.03); border-left:3px solid var(--warn); padding:10px 12px; border-radius:0 8px 8px 0; margin-top:10px}
+  .tag{display:inline-block; font-size:.68rem; background:#23344d; color:#9fc4ff; padding:2px 7px; border-radius:6px; margin-left:6px}
+  .bar{height:10px; border-radius:6px; background:#0e1722; overflow:hidden; margin-top:6px}
+  .bar > span{display:block; height:100%}
+  details{margin-top:8px} summary{cursor:pointer; color:var(--accent); font-size:.85rem}
+  .foot{font-size:.72rem; color:#6f819c; margin-top:24px; line-height:1.7}
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;background:#1d2c40;color:#9fb0c8;font-size:.7rem;margin:0 4px 4px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>🚗 自動車保険 × ローン残債 シミュレーター</h1>
+  <p class="lead">&e（アンディー）総合自動車保険・カローラクロス（ZVG16）の証券内容をベースに、<br>
+    「残債を一括返済して新しいローンを組む」場合の損得と、全損事故が起きた時の精算を試算します。</p>
+
+  <!-- 保険証サマリ -->
+  <div class="card policy">
+    <div class="result-head"><strong>📋 ご契約内容（保険証より自動入力）</strong>
+      <span class="pill">証券 A017318307</span></div>
+    <div class="policy-grid">
+      <div class="kv"><div class="k">車両保険金額（一般）</div><div class="v">330<small>万円</small></div></div>
+      <div class="kv"><div class="k">新車買替特約</div><div class="v">380<small>万円</small></div></div>
+      <div class="kv"><div class="k">車両免責</div><div class="v">5→10<small>万円</small></div></div>
+      <div class="kv"><div class="k">等級</div><div class="v">8<small>等級</small></div></div>
+      <div class="kv"><div class="k">年間保険料</div><div class="v">111,624<small>円</small></div></div>
+      <div class="kv"><div class="k">初度登録</div><div class="v">R6.6<small>（新車）</small></div></div>
+    </div>
+    <div class="note">
+      <b>新車買替特約とは：</b>全損、または修理費が車両保険金額の50%以上の損害で「同等の新車に買い替える」場合、車両保険金額(330万)に代えて
+      <b>新車保険金額 380万円</b>が支払われる特約です（買い替えない/現金受取の場合は車両保険330万が基準）。
+    </div>
+  </div>
+
+  <!-- 入力 -->
+  <h2>① 前提条件を入力</h2>
+  <div class="grid cols-2">
+    <div class="card">
+      <div class="result-head"><strong>現在のローン（既存）</strong></div>
+      <div class="field"><label>現在のローン残債</label>
+        <input type="number" id="curBal" value="180"><span class="unit">万円</span></div>
+      <div class="field"><label>現在ローンの実質年率（参考）</label>
+        <input type="number" id="curRate" value="3.9" step="0.1"><span class="unit">% / 年</span></div>
+      <div class="field"><label>現在ローンの残り返済回数</label>
+        <input type="number" id="curN" value="48"><span class="unit">回（ヶ月）</span></div>
+    </div>
+
+    <div class="card">
+      <div class="result-head"><strong>一括返済して組む新ローン</strong></div>
+      <div class="field"><label>新たに借りる金額</label>
+        <input type="number" id="newBal" value="180"><span class="unit">万円</span></div>
+      <div class="field"><label>新ローンの実質年率</label>
+        <input type="number" id="newRate" value="2.5" step="0.1"><span class="unit">% / 年</span></div>
+      <div class="field"><label>新ローンの返済回数</label>
+        <input type="number" id="newN" value="48"><span class="unit">回（ヶ月）</span></div>
+      <div class="field"><label>一括返済の手数料・違約金（任意）</label>
+        <input type="number" id="penalty" value="0"><span class="unit">万円</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="result-head"><strong>事故シナリオ</strong></div>
+    <label>もしもの時にどうなるか比較できます</label>
+    <div class="seg" id="scenSeg">
+      <button data-s="none" class="on">事故なし（通常返済）</button>
+      <button data-s="total">全損・買い替えあり（新車特約380万）</button>
+      <button data-s="cash">全損・現金受取（車両保険330万）</button>
+    </div>
+    <div class="field" style="margin-top:12px"><label>事故発生までの経過（全損時の精算タイミング）</label>
+      <input type="number" id="elapsed" value="12"><span class="unit">ヶ月後に全損と仮定</span></div>
+  </div>
+
+  <!-- 結果 -->
+  <h2>② シミュレーション結果</h2>
+  <div class="grid cols-2">
+    <div class="card">
+      <div class="result-head"><span>A. 現状維持（一括返済しない）</span><span class="badge b-a">プランA</span></div>
+      <div id="outA"></div>
+    </div>
+    <div class="card">
+      <div class="result-head"><span>B. 一括返済 ＋ 新ローン</span><span class="badge b-b">プランB</span></div>
+      <div id="outB"></div>
+    </div>
+  </div>
+
+  <div class="card" id="verdict"></div>
+
+  <h2>③ 全損事故が起きた場合の「手残り」早見</h2>
+  <div class="card">
+    <p class="lead" style="margin-bottom:10px">保険金で残債を完済した後、手元にいくら残るか（または不足するか）。新車買替特約を使えると差が大きくなります。</p>
+    <table id="lossTable"></table>
+    <div class="note">残債は事故時点の残高で計算。新車買替特約は「新車に買い替えること」が条件のため、買い替えない場合は車両保険330万が上限です。
+      免責金額（初回5万円）は車両保険・新車特約の支払いから差し引かれます。</div>
+  </div>
+
+  <p class="foot">
+    ※本ツールは保険証（&e 総合自動車保険／証券A017318307）記載値をもとにした概算シミュレーションです。
+    実際の保険金は損害状況・時価・約款判断により変動し、ローン条件は金融機関により異なります。正式な判断は約款・販売店・金融機関にご確認ください。<br>
+    対人・対物：無制限／人身傷害：3,000万円／対物超過：50万円 ほか（証券記載）
+  </p>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const yen = n => Math.round(n).toLocaleString('ja-JP');
+const man = n => (Math.round(n*100)/100).toLocaleString('ja-JP'); // 万円表示
+
+// 元利均等：月額返済額
+function monthlyPay(principal, annualRate, n){
+  if(n<=0) return 0;
+  const r = annualRate/100/12;
+  if(r===0) return principal/n;
+  return principal * r / (1 - Math.pow(1+r, -n));
+}
+// 残高（kヶ月返済後）
+function balanceAfter(principal, annualRate, n, k){
+  const r = annualRate/100/12;
+  const m = monthlyPay(principal, annualRate, n);
+  if(r===0) return Math.max(0, principal - m*k);
+  let bal = principal;
+  for(let i=0;i<k && i<n;i++){ bal = bal*(1+r) - m; }
+  return Math.max(0, bal);
+}
+
+let scenario = 'none';
+$('scenSeg').addEventListener('click', e=>{
+  if(e.target.tagName!=='BUTTON') return;
+  [...$('scenSeg').children].forEach(b=>b.classList.remove('on'));
+  e.target.classList.add('on');
+  scenario = e.target.dataset.s;
+  calc();
+});
+
+function planBlock(o){
+  // o: {principal(万), rate, n, label, extraCost(万)}
+  const P = o.principal*10000;
+  const m = monthlyPay(P, o.rate, o.n);
+  const total = m*o.n;
+  const interest = total - P;
+  const extra = (o.extraCost||0)*10000;
+  return {
+    m, total: total+extra, interest, extra, P, rate:o.rate, n:o.n,
+    html:`
+    <table>
+      <tr><td>借入元金</td><td>${yen(P)} 円</td></tr>
+      <tr><td>月々の返済</td><td><b>${yen(m)} 円</b></td></tr>
+      <tr><td>返済回数</td><td>${o.n} 回</td></tr>
+      <tr><td>総支払利息</td><td class="net-neg">${yen(interest)} 円</td></tr>
+      ${extra>0?`<tr><td>一括返済手数料</td><td class="net-neg">${yen(extra)} 円</td></tr>`:''}
+      <tr class="row-strong"><td>総支払額</td><td>${yen(total+extra)} 円</td></tr>
+    </table>`
+  };
+}
+
+function calc(){
+  const curBal=+$('curBal').value, curRate=+$('curRate').value, curN=+$('curN').value;
+  const newBal=+$('newBal').value, newRate=+$('newRate').value, newN=+$('newN').value;
+  const penalty=+$('penalty').value;
+  const elapsed=+$('elapsed').value;
+  const SHARYO=330, SHINSHA=380, MENSEKI=5; // 万円
+
+  const A = planBlock({principal:curBal, rate:curRate, n:curN, extraCost:0});
+  // プランB：現ローンを一括返済(=curBal*万)し、新たにnewBalを借りる
+  const B = planBlock({principal:newBal, rate:newRate, n:newN, extraCost:penalty});
+  $('outA').innerHTML = A.html;
+  $('outB').innerHTML = B.html;
+
+  // 比較（総支払額。プランBは「一括返済原資として現残債分の現金を投入」する点に注意書き）
+  const diff = A.total - B.total;
+  let v;
+  if(diff>0){
+    v=`<div class="result-head"><strong>💡 判定</strong><span class="badge b-b">プランB有利</span></div>
+       <p>新ローンに組み替えると総支払額が <b class="net-pos">${yen(diff)} 円</b> 少なくなります（主に金利差 ${curRate}% → ${newRate}%）。</p>`;
+  } else if(diff<0){
+    v=`<div class="result-head"><strong>💡 判定</strong><span class="badge b-a">プランA有利</span></div>
+       <p>組み替えると逆に <b class="net-neg">${yen(-diff)} 円</b> 多く支払うことになります。金利・回数・手数料を見直してください。</p>`;
+  } else {
+    v=`<div class="result-head"><strong>💡 判定</strong></div><p>総支払額はほぼ同じです。</p>`;
+  }
+  v+=`<div class="note"><b>キャッシュの注意：</b>プランBは現ローン残債 ${curBal}万円を一旦“一括返済”するため、その原資（手元資金 or 別資金）が必要です。
+      上の比較は「同額を新ローンで借り直した場合の利息差」を示しています。手元資金で完済し新ローンを組まない場合は、利息0でもっとも支払総額は小さくなります（ただし手元現金は減少）。</div>`;
+  $('verdict').innerHTML = v;
+
+  // 全損早見表
+  const balA = balanceAfter(curBal*10000, curRate, curN, elapsed)/10000; // 万
+  const balB = balanceAfter(newBal*10000, newRate, newN, elapsed)/10000;
+  function lossRow(name, balMan, payoutMan, badge){
+    const net = payoutMan - MENSEKI - balMan; // 万
+    const cls = net>=0?'net-pos':'net-neg';
+    const sign = net>=0?'+':'−';
+    return `<tr>
+      <td>${name}</td>
+      <td>${man(payoutMan)} 万</td>
+      <td>−${MENSEKI} 万</td>
+      <td>${man(balMan)} 万</td>
+      <td class="${cls}"><b>${sign}${man(Math.abs(net))} 万円</b></td>
+    </tr>`;
+  }
+  let rows=`<tr><th>ケース</th><th>保険金</th><th>免責</th><th>事故時残債</th><th>手残り(完済後)</th></tr>`;
+  rows+=lossRow(`A・新車買替380万（${elapsed}ヶ月後）`, balA, SHINSHA);
+  rows+=lossRow(`A・現金受取330万（${elapsed}ヶ月後）`, balA, SHARYO);
+  rows+=lossRow(`B・新車買替380万（${elapsed}ヶ月後）`, balB, SHINSHA);
+  rows+=lossRow(`B・現金受取330万（${elapsed}ヶ月後）`, balB, SHARYO);
+  $('lossTable').innerHTML = rows;
+}
+
+document.querySelectorAll('input').forEach(el=>el.addEventListener('input', calc));
+calc();
+</script>
+</body>
+</html>
