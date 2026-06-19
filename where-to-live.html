@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>東京どこに住む？ 適性診断（SESインフラ・出会い・人生）</title>
+<style>
+  :root{--line:#2e3d54;--txt:#e8eef7;--sub:#9fb0c8;--card:#1a2433;
+    --career:#4ea1ff;--dating:#ff6bb0;--rent:#36d399;--life:#ffb454;--gold:#ffd24a}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Hiragino Sans","Yu Gothic UI",-apple-system,"Segoe UI",sans-serif;background:linear-gradient(160deg,#0c121b,#13202f);color:var(--txt);line-height:1.6;padding:16px}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{font-size:1.3rem;margin:.2em 0 .1em}
+  h2{font-size:1.05rem;margin:1.4em 0 .6em;padding-left:.5em;border-left:4px solid var(--career)}
+  .lead{color:var(--sub);font-size:.9rem;margin-bottom:1em}
+  .nav{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .nav a{font-size:.82rem;padding:7px 12px;border-radius:999px;border:1px solid var(--line);color:var(--sub);text-decoration:none}
+  .nav a.on{background:var(--career);color:#06121f;border-color:var(--career);font-weight:700}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;background:#1d2c40;color:#9fb0c8;font-size:.7rem;margin:0 4px 4px 0}
+  /* weights */
+  .wgrid{display:grid;gap:14px}
+  @media(min-width:640px){.wgrid{grid-template-columns:1fr 1fr}}
+  .wrow label{display:flex;justify-content:space-between;font-size:.85rem;font-weight:700;margin-bottom:2px}
+  .wrow .v{font-variant-numeric:tabular-nums}
+  input[type=range]{width:100%}
+  .c-career{color:var(--career)}.c-dating{color:var(--dating)}.c-rent{color:var(--rent)}.c-life{color:var(--life)}
+  input.career{accent-color:var(--career)}input.dating{accent-color:var(--dating)}input.rent{accent-color:var(--rent)}input.life{accent-color:var(--life)}
+  .budget{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;font-size:.85rem}
+  .budget input[type=range]{flex:1;min-width:160px;accent-color:var(--rent)}
+  .chk{display:flex;align-items:center;gap:8px;font-size:.85rem}.chk input{width:auto}
+  .preset{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .preset button{padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#0e1722;color:var(--sub);font-size:.78rem;font-weight:700;cursor:pointer}
+  .preset button:hover{border-color:var(--career);color:var(--txt)}
+  /* ranking */
+  .rank{display:flex;flex-direction:column;gap:10px}
+  .area{background:#16202e;border:1px solid var(--line);border-radius:12px;padding:12px 14px;transition:.25s;position:relative;overflow:hidden}
+  .area.over{opacity:.5}
+  .area.top1{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+  .ahead{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .aname{font-size:1.05rem;font-weight:800}
+  .medal{font-size:1.1rem;margin-right:4px}
+  .ascore{font-size:1.4rem;font-weight:800;color:var(--gold)}
+  .ascore small{font-size:.7rem;color:var(--sub);font-weight:400}
+  .arent{font-size:.78rem;color:var(--sub)}
+  .arent .over-tag{color:#ff6b6b;font-weight:700}
+  .bars{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+  .bcol .blab{font-size:.62rem;color:var(--sub);margin-bottom:2px}
+  .btrack{height:6px;border-radius:4px;background:#0e1722;overflow:hidden}
+  .btrack>span{display:block;height:100%}
+  .anote{font-size:.76rem;color:var(--sub);margin-top:8px}
+  .totalbar{height:8px;border-radius:5px;background:#0e1722;margin-top:8px;overflow:hidden}
+  .totalbar>span{display:block;height:100%;background:linear-gradient(90deg,var(--career),var(--gold))}
+  /* experts */
+  .exp{border-left:3px solid var(--career);padding:8px 12px;background:rgba(255,255,255,.03);border-radius:0 8px 8px 0;margin-bottom:10px;font-size:.82rem}
+  .exp.dating{border-left-color:var(--dating)}.exp.rent{border-left-color:var(--rent)}.exp.fp{border-left-color:var(--life)}
+  .exp b{display:block;margin-bottom:2px}
+  details summary{cursor:pointer;color:var(--career);font-weight:600;font-size:.9rem}
+  .foot{font-size:.72rem;color:#6f819c;margin-top:24px;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="nav">
+    <a href="index.html">🚗 新車買替＆ローン</a>
+    <a href="tokyo.html">🚆 車を手放して東京へ</a>
+    <a href="where-to-live.html" class="on">🗺️ 東京どこに住む？</a>
+  </div>
+
+  <h1>🗺️ 東京どこに住む？ 適性診断</h1>
+  <p class="lead">33歳・独身・<b>インフラエンジニア（SES）</b>の「キャリア × 出会い × 人生（家計・生活）」を、4人の専門家エージェントが10エリアを採点。
+    あなたの<b>重視度</b>を動かすとランキングがリアルタイムに並び替わります。
+    <span class="pill">SESキャリアコンサル</span><span class="pill">婚活アドバイザー</span><span class="pill">街選び専門家</span><span class="pill">ライフプランFP</span></p>
+
+  <!-- 重視度 -->
+  <h2>① 何を重視する？（重視度スライダー）</h2>
+  <div class="card">
+    <div class="wgrid">
+      <div class="wrow"><label><span class="c-career">🧑‍💻 キャリア（案件アクセス）</span><span class="v"><span id="wCareerV">4</span>/5</span></label>
+        <input type="range" class="career" id="wCareer" min="0" max="5" step="1" value="4"></div>
+      <div class="wrow"><label><span class="c-dating">💘 出会い・恋愛</span><span class="v"><span id="wDatingV">4</span>/5</span></label>
+        <input type="range" class="dating" id="wDating" min="0" max="5" step="1" value="4"></div>
+      <div class="wrow"><label><span class="c-rent">💰 家賃コスパ</span><span class="v"><span id="wRentV">2</span>/5</span></label>
+        <input type="range" class="rent" id="wRent" min="0" max="5" step="1" value="2"></div>
+      <div class="wrow"><label><span class="c-life">🌿 生活環境</span><span class="v"><span id="wLifeV">3</span>/5</span></label>
+        <input type="range" class="life" id="wLife" min="0" max="5" step="1" value="3"></div>
+    </div>
+    <div class="preset">
+      <button data-p="4,4,2,3">標準（キャリア×出会い重視）</button>
+      <button data-p="5,2,3,2">キャリア最優先</button>
+      <button data-p="2,5,2,3">出会い最優先</button>
+      <button data-p="2,2,5,3">節約・貯蓄重視</button>
+      <button data-p="3,3,3,3">バランス均等</button>
+    </div>
+    <div class="budget">
+      <span>💴 家賃上限</span>
+      <input type="range" id="budget" min="8" max="14" step="0.5" value="11">
+      <span><b id="budgetV">11.0</b> 万円</span>
+      <label class="chk"><input type="checkbox" id="excludeOver"> 予算オーバーを除外</label>
+    </div>
+    <p class="anote" style="margin-top:8px">FP推奨：表示家賃の<b class="c-life">推奨上限9万 / 適正上限11万</b>（手取り約31.6万・家賃補助3万込みの実質負担で算定）。9万前後・実質6万に抑え、車なしで浮く分を貯蓄・自己投資へ。</p>
+  </div>
+
+  <!-- ランキング -->
+  <h2>② あなたへのおすすめ順</h2>
+  <div class="rank" id="rank"></div>
+
+  <!-- 専門家コメント -->
+  <h2>③ 召喚した専門家の総評</h2>
+  <div class="card">
+    <div class="exp"><b>🧑‍💻 SES/インフラ キャリアコンサルタント</b>
+      SESは数ヶ月〜年単位で常駐先が変わるため<b>複数路線・乗換最少</b>が命。南北＋ターミナルを押さえる<b>大井町・武蔵小杉・品川</b>が潰しが効く。深夜・障害対応に備え終電の遅い幹線沿線が有利。クラウド/SRE転身狙いなら勉強会の多い<b>五反田・中野</b>。</div>
+    <div class="exp dating"><b>💘 婚活・出会いアドバイザー</b>
+      「現地の母数」より<b>出会いの多い街（恵比寿/中目黒/渋谷/新宿）への近さ</b>を優先。総合では<b>五反田・中野</b>が最有力、次点で品川・武蔵小杉・豊洲。コスパ両立なら大井町・蒲田を拠点に近隣繁華街へ出る戦略も有効。</div>
+    <div class="exp rent"><b>🏙️ 東京の街選び・不動産専門家</b>
+      コスパ最優先なら<b>蒲田・川崎・北千住</b>。環境とのバランスは<b>北千住・大井町</b>。<b>品川・豊洲・五反田</b>は環境は良いが9万では条件をかなり妥協する前提。（1K/1R相場・2026年上昇傾向の目安）</div>
+    <div class="exp fp"><b>💰 ライフプランFP</b>
+      表示家賃は<b>天井11万・推奨9万</b>。車なしで浮く月2〜4万は<b>生活防衛資金120〜150万 → 自己投資（クラウド資格）→ NISA積立 → 結婚資金</b>の順で。33歳は複利を効かせる助走期、自己投資のリターンが最大。</div>
+  </div>
+
+  <p class="foot">
+    ※4エリア軸（キャリア＝案件アクセス／出会い／家賃コスパ／生活環境）のスコアは各専門家エージェントの定性評価を5点満点で数値化したもの、家賃は1K/1R相場の目安（2026年・上昇傾向）。
+    総合点 = Σ(各軸スコア×重視度) ÷ Σ(5×重視度) を100点換算。重視度がすべて0のときは均等扱い。実際の最適解は常駐先の立地・物件条件・補助制度で変わります。<br>
+    前提：本人33歳・独身・SESインフラ・額面35万＋残業・車は手放す・家賃補助3万／引越補助10万（<a href="tokyo.html" style="color:var(--career)">車を手放して東京へ</a>の続き）。
+  </p>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const areas=[
+  {name:'大井町', career:5,dating:3,rent:3,life:4, yen:10,  note:'3路線ハブで品川2分。職住・生活バランス型の万能拠点'},
+  {name:'品川（港南・天王洲）', career:5,dating:4,rent:1,life:4, yen:13, note:'高単価客先が集積する一等地。家賃は最高クラスで予算は厳しい'},
+  {name:'五反田', career:4,dating:5,rent:2,life:4, yen:11, note:'五反田バレー＆繁華街。出会い最強格だが家賃高め'},
+  {name:'蒲田', career:4,dating:3,rent:5,life:3, yen:8,  note:'コスパ最強。品川8分・下町の活気。駅前は雑多'},
+  {name:'武蔵小杉', career:5,dating:4,rent:3,life:5, yen:10, note:'4路線直通＆生活環境最上位。独身〜将来も対応の万能型'},
+  {name:'豊洲', career:3,dating:4,rent:2,life:5, yen:12.5,note:'湾岸DC案件向き・QOL最高クラスだが割高。横移動は弱め'},
+  {name:'門前仲町', career:3,dating:3,rent:3,life:4, yen:10.5,note:'大手町至近・下町情緒。品川/川崎/湾岸への直通は弱い'},
+  {name:'中野', career:4,dating:5,rent:3,life:4, yen:10, note:'新宿4分・趣味コミュニティ濃厚。南側案件には弱い'},
+  {name:'北千住', career:3,dating:3,rent:4,life:4, yen:9,  note:'5路線ターミナル・コスパ良。品川/川崎/湾岸は遠い'},
+  {name:'川崎', career:4,dating:3,rent:4,life:3, yen:8.5,note:'DC集積・買い物最強・割安。東口の治安はエリア選び要'},
+];
+const dims=[['career','キャリア','--career'],['dating','出会い','--dating'],['rent','コスパ','--rent'],['life','生活','--life']];
+
+function getW(){return {career:+$('wCareer').value,dating:+$('wDating').value,rent:+$('wRent').value,life:+$('wLife').value};}
+
+function render(){
+  const w=getW();
+  $('wCareerV').textContent=w.career;$('wDatingV').textContent=w.dating;$('wRentV').textContent=w.rent;$('wLifeV').textContent=w.life;
+  const budget=+$('budget').value; $('budgetV').textContent=budget.toFixed(1);
+  const excludeOver=$('excludeOver').checked;
+  let wsum=w.career+w.dating+w.rent+w.life;
+  const eff = wsum===0 ? {career:1,dating:1,rent:1,life:1} : w;
+  const effSum = wsum===0 ? 4 : wsum;
+
+  let list=areas.map(a=>{
+    const raw=a.career*eff.career+a.dating*eff.dating+a.rent*eff.rent+a.life*eff.life;
+    const score=Math.round(raw/(5*effSum)*1000)/10; // %
+    return {...a, score, over:a.yen>budget+1e-9};
+  });
+  if(excludeOver) list=list.filter(a=>!a.over);
+  list.sort((x,y)=> y.score-x.score || x.yen-y.yen);
+
+  const medals=['🥇','🥈','🥉'];
+  $('rank').innerHTML=list.map((a,i)=>{
+    const bars=dims.map(([k,lab,cssv])=>`
+      <div class="bcol"><div class="blab">${lab} ${a[k]}</div>
+      <div class="btrack"><span style="width:${a[k]/5*100}%;background:var(${cssv})"></span></div></div>`).join('');
+    const rentTag=a.over?`<span class="over-tag">予算オーバー</span>`:'';
+    return `<div class="area ${i===0?'top1':''} ${a.over?'over':''}">
+      <div class="ahead">
+        <div class="aname">${i<3?`<span class="medal">${medals[i]}</span>`:`<span style="color:var(--sub);font-size:.9rem">${i+1}. </span>`}${a.name}</div>
+        <div class="ascore">${a.score}<small>点</small></div>
+      </div>
+      <div class="totalbar"><span style="width:${a.score}%"></span></div>
+      <div class="arent">家賃目安 ${a.yen}万 ${rentTag}</div>
+      <div class="bars">${bars}</div>
+      <div class="anote">${a.note}</div>
+    </div>`;
+  }).join('') || '<div class="card">条件に合うエリアがありません。家賃上限を上げてください。</div>';
+}
+
+document.querySelectorAll('input').forEach(el=>el.addEventListener('input',render));
+document.querySelectorAll('.preset button').forEach(b=>b.addEventListener('click',()=>{
+  const[c,d,r,l]=b.dataset.p.split(',');
+  $('wCareer').value=c;$('wDating').value=d;$('wRent').value=r;$('wLife').value=l;render();
+}));
+render();
+</script>
+</body>
+</html>
