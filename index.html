@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>自動車保険×ローン残債 シミュレーター（&e カローラクロス）</title>
+<title>全損→新車買替＆ローン シミュレーター（&e カローラクロス）</title>
 <style>
   :root{
     --bg:#0f1620; --card:#1a2433; --card2:#22304a; --line:#2e3d54;
@@ -11,259 +11,249 @@
     --warn:#ffb454; --danger:#ff6b6b; --good:#36d399;
   }
   *{box-sizing:border-box}
-  body{
-    margin:0; font-family:"Hiragino Sans","Yu Gothic UI",-apple-system,"Segoe UI",sans-serif;
-    background:linear-gradient(160deg,#0c121b,#13202f); color:var(--txt);
-    line-height:1.6; padding:16px;
-  }
+  body{margin:0; font-family:"Hiragino Sans","Yu Gothic UI",-apple-system,"Segoe UI",sans-serif;
+    background:linear-gradient(160deg,#0c121b,#13202f); color:var(--txt); line-height:1.6; padding:16px}
   .wrap{max-width:1080px; margin:0 auto}
-  h1{font-size:1.35rem; margin:.2em 0 .1em}
-  h2{font-size:1.05rem; margin:1.4em 0 .6em; padding-left:.5em; border-left:4px solid var(--accent)}
+  h1{font-size:1.3rem; margin:.2em 0 .1em}
+  h2{font-size:1.05rem; margin:1.5em 0 .6em; padding-left:.5em; border-left:4px solid var(--accent)}
+  .step{font-size:.7rem; color:var(--accent); font-weight:700; letter-spacing:.05em}
   .lead{color:var(--sub); font-size:.9rem; margin-bottom:1.2em}
   .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:16px}
   .grid{display:grid; gap:12px}
   @media(min-width:720px){.cols-2{grid-template-columns:1fr 1fr}.cols-3{grid-template-columns:1fr 1fr 1fr}}
-  /* 保険証サマリ */
   .policy{background:linear-gradient(135deg,#15263d,#1a2f4d); border:1px solid #2b466b}
-  .policy-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px}
+  .policy-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px}
   .kv{background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:10px; padding:8px 10px}
   .kv .k{font-size:.72rem; color:var(--sub)}
   .kv .v{font-size:1.05rem; font-weight:700}
   .kv .v small{font-size:.7rem; color:var(--sub); font-weight:400}
-  /* 入力 */
   label{display:block; font-size:.78rem; color:var(--sub); margin:0 0 4px}
   .field{margin-bottom:12px}
-  input[type=number]{
-    width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--line);
-    background:#0e1722; color:var(--txt); font-size:1rem; font-weight:600;
-  }
+  input[type=number]{width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--line);
+    background:#0e1722; color:var(--txt); font-size:1rem; font-weight:600}
+  input[type=range]{width:100%}
   input:focus{outline:2px solid var(--accent); border-color:var(--accent)}
   .unit{font-size:.75rem; color:var(--sub); margin-left:4px}
   .seg{display:flex; gap:6px; flex-wrap:wrap}
-  .seg button{
-    flex:1; min-width:80px; padding:9px 6px; border-radius:10px; border:1px solid var(--line);
-    background:#0e1722; color:var(--sub); font-weight:700; cursor:pointer; font-size:.85rem;
-  }
+  .seg button{flex:1; min-width:90px; padding:9px 6px; border-radius:10px; border:1px solid var(--line);
+    background:#0e1722; color:var(--sub); font-weight:700; cursor:pointer; font-size:.83rem}
   .seg button.on{background:var(--accent); color:#06121f; border-color:var(--accent)}
-  /* 結果 */
+  .chk{display:flex; align-items:center; gap:8px; font-size:.85rem; color:var(--txt); margin:8px 0}
+  .chk input{width:auto}
   .result-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-bottom:6px}
   .badge{font-size:.7rem; padding:3px 8px; border-radius:999px; font-weight:700}
-  .b-a{background:#26425f; color:#bfe0ff}
-  .b-b{background:#2c4a3c; color:#bff0d6}
-  .big{font-size:1.6rem; font-weight:800}
+  .b-a{background:#26425f; color:#bfe0ff} .b-b{background:#2c4a3c; color:#bff0d6}
+  .big{font-size:1.7rem; font-weight:800}
   .big.good{color:var(--good)} .big.warn{color:var(--warn)} .big.danger{color:var(--danger)}
   table{width:100%; border-collapse:collapse; font-size:.86rem}
   td,th{padding:7px 6px; border-bottom:1px solid var(--line); text-align:right}
   th:first-child,td:first-child{text-align:left; color:var(--sub)}
-  .row-strong td{font-weight:800; font-size:.95rem; border-bottom:2px solid var(--accent)}
+  .row-strong td{font-weight:800; font-size:.98rem; border-bottom:2px solid var(--accent)}
+  .row-sub td{color:var(--sub); font-size:.8rem}
   .net-pos{color:var(--good)} .net-neg{color:var(--danger)}
   .note{font-size:.8rem; color:var(--sub); background:rgba(255,255,255,.03); border-left:3px solid var(--warn); padding:10px 12px; border-radius:0 8px 8px 0; margin-top:10px}
-  .tag{display:inline-block; font-size:.68rem; background:#23344d; color:#9fc4ff; padding:2px 7px; border-radius:6px; margin-left:6px}
-  .bar{height:10px; border-radius:6px; background:#0e1722; overflow:hidden; margin-top:6px}
-  .bar > span{display:block; height:100%}
-  details{margin-top:8px} summary{cursor:pointer; color:var(--accent); font-size:.85rem}
-  .foot{font-size:.72rem; color:#6f819c; margin-top:24px; line-height:1.7}
+  .note.danger{border-left-color:var(--danger)} .note.good{border-left-color:var(--good)}
   .pill{display:inline-block;padding:2px 8px;border-radius:999px;background:#1d2c40;color:#9fb0c8;font-size:.7rem;margin:0 4px 4px 0}
+  .warnbox{display:none; background:rgba(255,107,107,.12); border:1px solid var(--danger); color:#ffd0d0; padding:8px 12px; border-radius:10px; font-size:.82rem; margin-top:8px}
+  .warnbox.show{display:block}
+  details{margin-top:10px} summary{cursor:pointer; color:var(--accent); font-size:.85rem; font-weight:600}
+  .src{font-size:.72rem;color:#6f819c;margin:4px 0 0}
+  .foot{font-size:.72rem; color:#6f819c; margin-top:24px; line-height:1.7}
+  .reviewer{font-size:.68rem;background:#23344d;color:#9fc4ff;padding:2px 7px;border-radius:6px;margin-left:6px}
+  .reviewer.fp{background:#2c4a3c;color:#bff0d6}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <h1>🚗 自動車保険 × ローン残債 シミュレーター</h1>
-  <p class="lead">&e（アンディー）総合自動車保険・カローラクロス（ZVG16）の証券内容をベースに、<br>
-    「残債を一括返済して新しいローンを組む」場合の損得と、全損事故が起きた時の精算を試算します。</p>
+  <h1>🚗 全損 → 新車買替＆ローン組み直し シミュレーター</h1>
+  <p class="lead">&e（アンディー）総合自動車保険・カローラクロス（ZVG16）の証券をベースに、<b>全損が確定した前提</b>で
+    「保険金の精算 → 残債180万の清算 → 新車購入と新ローン」の最適な落とし所を試算します。<br>
+    <span class="reviewer">保険会社目線レビュー反映</span><span class="reviewer fp">FP目線レビュー反映</span></p>
 
-  <!-- 保険証サマリ -->
+  <!-- 保険証 -->
   <div class="card policy">
-    <div class="result-head"><strong>📋 ご契約内容（保険証より自動入力）</strong>
-      <span class="pill">証券 A017318307</span></div>
+    <div class="result-head"><strong>📋 ご契約内容（保険証より）</strong><span class="pill">証券 A017318307</span></div>
     <div class="policy-grid">
-      <div class="kv"><div class="k">車両保険金額（一般）</div><div class="v">330<small>万円</small></div></div>
+      <div class="kv"><div class="k">車両保険（一般）</div><div class="v">330<small>万円</small></div></div>
       <div class="kv"><div class="k">新車買替特約</div><div class="v">380<small>万円</small></div></div>
-      <div class="kv"><div class="k">車両免責</div><div class="v">5→10<small>万円</small></div></div>
-      <div class="kv"><div class="k">等級</div><div class="v">8<small>等級</small></div></div>
-      <div class="kv"><div class="k">年間保険料</div><div class="v">111,624<small>円</small></div></div>
+      <div class="kv"><div class="k">免責（初回）</div><div class="v">5<small>万円</small></div></div>
+      <div class="kv"><div class="k">現在の等級</div><div class="v">8<small>等級</small></div></div>
+      <div class="kv"><div class="k">現在の年間保険料</div><div class="v">111,624<small>円</small></div></div>
       <div class="kv"><div class="k">初度登録</div><div class="v">R6.6<small>（新車）</small></div></div>
     </div>
-    <div class="note">
-      <b>新車買替特約とは：</b>全損、または修理費が車両保険金額の50%以上の損害で「同等の新車に買い替える」場合、車両保険金額(330万)に代えて
-      <b>新車保険金額 380万円</b>が支払われる特約です（買い替えない/現金受取の場合は車両保険330万が基準）。
-    </div>
+    <div class="note"><b>新車買替特約の発動条件（要確認）：</b>① 全損 or 修理費が車両保険金額の50%以上、② <b>新車（中古・登録済未使用車は対象外の場合あり）</b>に買い替え、
+      ③ 同一用途・車種、④ <b>事故日から一定期間内（多くは6ヶ月以内）に取得・登録</b>。1つでも外れると車両保険330万ベースに下がり、差額50万を取りこぼします。</div>
   </div>
 
-  <!-- 入力 -->
-  <h2>① 前提条件を入力</h2>
-  <div class="grid cols-2">
-    <div class="card">
-      <div class="result-head"><strong>現在のローン（既存）</strong></div>
-      <div class="field"><label>現在のローン残債</label>
-        <input type="number" id="curBal" value="180"><span class="unit">万円</span></div>
-      <div class="field"><label>現在ローンの実質年率（参考）</label>
-        <input type="number" id="curRate" value="3.9" step="0.1"><span class="unit">% / 年</span></div>
-      <div class="field"><label>現在ローンの残り返済回数</label>
-        <input type="number" id="curN" value="48"><span class="unit">回（ヶ月）</span></div>
-    </div>
-
-    <div class="card">
-      <div class="result-head"><strong>一括返済して組む新ローン</strong></div>
-      <div class="field"><label>新たに借りる金額</label>
-        <input type="number" id="newBal" value="180"><span class="unit">万円</span></div>
-      <div class="field"><label>新ローンの実質年率</label>
-        <input type="number" id="newRate" value="2.5" step="0.1"><span class="unit">% / 年</span></div>
-      <div class="field"><label>新ローンの返済回数</label>
-        <input type="number" id="newN" value="48"><span class="unit">回（ヶ月）</span></div>
-      <div class="field"><label>一括返済の手数料・違約金（任意）</label>
-        <input type="number" id="penalty" value="0"><span class="unit">万円</span></div>
-    </div>
-  </div>
-
+  <!-- STEP1 保険金精算 -->
+  <h2><span class="step">STEP 1</span>　全損保険金の精算 → 手残り</h2>
   <div class="card">
-    <div class="result-head"><strong>事故シナリオ</strong></div>
-    <label>もしもの時にどうなるか比較できます</label>
-    <div class="seg" id="scenSeg">
-      <button data-s="none" class="on">事故なし（通常返済）</button>
-      <button data-s="total">全損・買い替えあり（新車特約380万）</button>
-      <button data-s="cash">全損・現金受取（車両保険330万）</button>
+    <div class="field"><label>受け取り方（新車買替380万 / 現金330万）</label>
+      <div class="seg" id="payoutSeg">
+        <button data-p="380" class="on">新車買替特約 380万円</button>
+        <button data-p="330">現金受取（車両保険）330万円</button>
+      </div>
     </div>
-    <div class="field" style="margin-top:12px"><label>事故発生までの経過（全損時の精算タイミング）</label>
-      <input type="number" id="elapsed" value="12"><span class="unit">ヶ月後に全損と仮定</span></div>
+    <div class="grid cols-2">
+      <div class="field"><label>事故時点のローン残債</label>
+        <input type="number" id="debt" value="180"><span class="unit">万円</span></div>
+      <div class="field"><label>車両全損時諸費用特約の上乗せ（目安10〜20万）</label>
+        <input type="number" id="extra" value="15"><span class="unit">万円</span></div>
+    </div>
+    <label class="chk"><input type="checkbox" id="menZero" checked> 全損時は免責5万円が引かれない約款（要確認・チェックで5万円戻す）</label>
+    <table id="settle"></table>
+    <div class="note good">保険金は<b>損害の補填なので非課税</b>です。新車買替380万でも課税されません。残債清算は被保険者の義務で、所有権留保（車検証の所有者がローン会社）の場合は<b>所有権解除・抹消の書類</b>に所有者の関与が必要です。</div>
   </div>
 
-  <!-- 結果 -->
-  <h2>② シミュレーション結果</h2>
-  <div class="grid cols-2">
-    <div class="card">
-      <div class="result-head"><span>A. 現状維持（一括返済しない）</span><span class="badge b-a">プランA</span></div>
-      <div id="outA"></div>
+  <!-- STEP2 新車＋頭金配分 -->
+  <h2><span class="step">STEP 2</span>　新車購入と頭金配分（本丸）</h2>
+  <div class="card">
+    <p class="lead" style="margin-bottom:10px">STEP1の手残りを「新車の頭金」と「手元に残す現金」にどう振り分けるかで、借入額・利息・家計の安全度が変わります。</p>
+    <div class="grid cols-2">
+      <div class="field"><label>新車の車両価格</label>
+        <input type="number" id="carPrice" value="350"><span class="unit">万円</span></div>
+      <div class="field"><label>諸費用（環境性能割・登録・自賠責など 目安10〜20万）</label>
+        <input type="number" id="fees" value="18"><span class="unit">万円</span></div>
     </div>
-    <div class="card">
-      <div class="result-head"><span>B. 一括返済 ＋ 新ローン</span><span class="badge b-b">プランB</span></div>
-      <div id="outB"></div>
+    <div class="field"><label>頭金に入れる額　<span id="downLabel" style="color:var(--accent);font-weight:700"></span></label>
+      <input type="range" id="downRange" min="0" max="300" step="5" value="100">
     </div>
+    <div class="field"><label>残し額（生活防衛資金）<span id="keepLabel" style="color:var(--good);font-weight:700"></span></label>
+      <div class="warnbox" id="keepWarn">⚠ 手元現金が生活防衛資金の目安（生活費3〜6ヶ月＝100万前後）を下回ります。全損直後の臨時出費に備え、頭金を入れすぎないことを推奨。</div>
+    </div>
+    <div class="grid cols-2">
+      <div class="field"><label>新ローンの実質年率（銀行1〜2%台 / ディーラー3〜5%台）</label>
+        <input type="number" id="rate" value="1.8" step="0.1"><span class="unit">% / 年</span></div>
+      <div class="field"><label>返済回数</label>
+        <input type="number" id="months" value="60"><span class="unit">回（ヶ月）</span></div>
+    </div>
+    <table id="loanTable"></table>
+    <div class="note"><b>FP助言：</b>金利が銀行1〜2%台なら、頭金を全部入れるより<b>生活防衛資金を手元に残す</b>方が家計は安全。金利3%超（ディーラー）なら頭金を厚くして借入を圧縮。
+      <b>まず銀行マイカーローンを第一候補</b>に、ディーラーの3〜5%をそのまま受けないこと。</div>
   </div>
 
+  <!-- STEP3 等級ダウンの将来コスト -->
+  <h2><span class="step">STEP 3</span>　等級ダウンの将来コスト（見落とし注意）</h2>
+  <div class="card">
+    <p class="lead" style="margin-bottom:10px">全損で保険を使うと<b>3等級ダウン＋事故有係数3年</b>。8等級→5等級になり、翌年以降の保険料が上がります。これを手残りから差し引いた「<b>実質手残り</b>」が本当の余力です。</p>
+    <div class="grid cols-2">
+      <div class="field"><label>事故後の想定 年間保険料（5等級・事故有／新車で車両保険金額UPも反映・目安13〜16万）</label>
+        <input type="number" id="newPrem" value="140000"><span class="unit">円</span></div>
+      <div class="field"><label>事故有係数の影響年数</label>
+        <input type="number" id="premYears" value="3"><span class="unit">年</span></div>
+    </div>
+    <table id="premTable"></table>
+  </div>
+
+  <!-- 総合判定 -->
+  <h2><span class="step">結論</span>　実質ベースの最終ポジション</h2>
   <div class="card" id="verdict"></div>
 
-  <h2>③ 全損事故が起きた場合の「手残り」早見</h2>
-  <div class="card">
-    <p class="lead" style="margin-bottom:10px">保険金で残債を完済した後、手元にいくら残るか（または不足するか）。新車買替特約を使えると差が大きくなります。</p>
-    <table id="lossTable"></table>
-    <div class="note">残債は事故時点の残高で計算。新車買替特約は「新車に買い替えること」が条件のため、買い替えない場合は車両保険330万が上限です。
-      免責金額（初回5万円）は車両保険・新車特約の支払いから差し引かれます。</div>
-  </div>
+  <details>
+    <summary>専門家レビュー要旨（保険会社目線・FP目線）を読む</summary>
+    <div class="card" style="margin-top:10px">
+      <p><b class="reviewer">保険会社目線</b>　新車買替特約は要件（全損/修理費50%超・新車限定・期限内取得・用途車種一致）を満たせば380万、外すと330万。
+        <b>全損時免責ゼロ約款</b>なら5万戻る可能性。<b>車両全損時諸費用特約</b>の上乗せ請求を忘れずに。等級は事故態様次第だが全損衝突なら3等級ダウンが現実的。
+        差益50万＋諸費用 ＞ 等級ダウン3年累計、となり<b>保険使用＋新車買替が合理的</b>。所有権留保なら早めにローン会社へ連絡し抹消書類を段取り。</p>
+      <p><b class="reviewer fp">FP目線</b>　同クラス新車を続けるなら380万特約（現金330万より+50万）。<b>車格を下げたいなら現金330万＋安い車</b>でトータル支出減。
+        ローンは銀行1〜2%台狙い、<b>生活防衛資金を残す範囲で頭金</b>。保険金を理由に車格を上げない（税・保険・利息で四重に家計圧迫）。
+        余裕資金は<b>期間短縮型の繰上返済</b>へ。保険金は非課税、諸費用は手残りから先取りで計画。</p>
+    </div>
+  </details>
 
   <p class="foot">
-    ※本ツールは保険証（&e 総合自動車保険／証券A017318307）記載値をもとにした概算シミュレーションです。
-    実際の保険金は損害状況・時価・約款判断により変動し、ローン条件は金融機関により異なります。正式な判断は約款・販売店・金融機関にご確認ください。<br>
-    対人・対物：無制限／人身傷害：3,000万円／対物超過：50万円 ほか（証券記載）
+    ※本ツールは保険証（&e 総合自動車保険／証券A017318307）記載値と一般的な車両新価特約の標準的扱いに基づく<b>概算</b>です。相場数値（金利・諸費用・等級別保険料の上昇幅等）は<b>目安</b>。
+    新車買替特約の発動要件・全損時免責の有無・等級区分・所有権留保の精算は、いずれも<b>約款・証券・車検証の現物で要確認</b>です。<br>
+    対人・対物：無制限／人身傷害：3,000万円／対物超過特約：50万円／弁護士特約・車両全損時諸費用特約 ほか付帯（証券記載）。相手ありの事故では弁護士特約・対物超過の活用余地あり。
   </p>
 </div>
 
 <script>
 const $ = id => document.getElementById(id);
 const yen = n => Math.round(n).toLocaleString('ja-JP');
-const man = n => (Math.round(n*100)/100).toLocaleString('ja-JP'); // 万円表示
+const man = n => (Math.round(n*100)/100).toLocaleString('ja-JP');
 
-// 元利均等：月額返済額
-function monthlyPay(principal, annualRate, n){
+function monthlyPay(P, annual, n){
   if(n<=0) return 0;
-  const r = annualRate/100/12;
-  if(r===0) return principal/n;
-  return principal * r / (1 - Math.pow(1+r, -n));
-}
-// 残高（kヶ月返済後）
-function balanceAfter(principal, annualRate, n, k){
-  const r = annualRate/100/12;
-  const m = monthlyPay(principal, annualRate, n);
-  if(r===0) return Math.max(0, principal - m*k);
-  let bal = principal;
-  for(let i=0;i<k && i<n;i++){ bal = bal*(1+r) - m; }
-  return Math.max(0, bal);
+  const r = annual/100/12;
+  if(r===0) return P/n;
+  return P*r/(1-Math.pow(1+r,-n));
 }
 
-let scenario = 'none';
-$('scenSeg').addEventListener('click', e=>{
+let payout = 380;
+$('payoutSeg').addEventListener('click', e=>{
   if(e.target.tagName!=='BUTTON') return;
-  [...$('scenSeg').children].forEach(b=>b.classList.remove('on'));
-  e.target.classList.add('on');
-  scenario = e.target.dataset.s;
-  calc();
+  [...$('payoutSeg').children].forEach(b=>b.classList.remove('on'));
+  e.target.classList.add('on'); payout=+e.target.dataset.p; calc();
 });
 
-function planBlock(o){
-  // o: {principal(万), rate, n, label, extraCost(万)}
-  const P = o.principal*10000;
-  const m = monthlyPay(P, o.rate, o.n);
-  const total = m*o.n;
-  const interest = total - P;
-  const extra = (o.extraCost||0)*10000;
-  return {
-    m, total: total+extra, interest, extra, P, rate:o.rate, n:o.n,
-    html:`
-    <table>
-      <tr><td>借入元金</td><td>${yen(P)} 円</td></tr>
-      <tr><td>月々の返済</td><td><b>${yen(m)} 円</b></td></tr>
-      <tr><td>返済回数</td><td>${o.n} 回</td></tr>
-      <tr><td>総支払利息</td><td class="net-neg">${yen(interest)} 円</td></tr>
-      ${extra>0?`<tr><td>一括返済手数料</td><td class="net-neg">${yen(extra)} 円</td></tr>`:''}
-      <tr class="row-strong"><td>総支払額</td><td>${yen(total+extra)} 円</td></tr>
-    </table>`
-  };
-}
-
 function calc(){
-  const curBal=+$('curBal').value, curRate=+$('curRate').value, curN=+$('curN').value;
-  const newBal=+$('newBal').value, newRate=+$('newRate').value, newN=+$('newN').value;
-  const penalty=+$('penalty').value;
-  const elapsed=+$('elapsed').value;
-  const SHARYO=330, SHINSHA=380, MENSEKI=5; // 万円
+  const debt=+$('debt').value, extra=+$('extra').value, menZero=$('menZero').checked;
+  const menseki = menZero?0:5;
+  // STEP1 精算（万円）
+  const handed = payout - menseki + extra - debt;
+  $('settle').innerHTML = `
+    <tr><td>保険金（${payout===380?'新車買替特約':'現金・車両保険'}）</td><td>${man(payout)} 万</td></tr>
+    <tr class="row-sub"><td>免責${menZero?'（全損時ゼロ）':''}</td><td>${menseki?('−'+menseki+' 万'):'0 万'}</td></tr>
+    <tr><td>車両全損時諸費用特約 上乗せ</td><td class="net-pos">+${man(extra)} 万</td></tr>
+    <tr><td>ローン残債の清算</td><td class="net-neg">−${man(debt)} 万</td></tr>
+    <tr class="row-strong"><td>手残り（新車の原資）</td><td class="${handed>=0?'net-pos':'net-neg'}">${handed>=0?'+':'−'}${man(Math.abs(handed))} 万円</td></tr>`;
 
-  const A = planBlock({principal:curBal, rate:curRate, n:curN, extraCost:0});
-  // プランB：現ローンを一括返済(=curBal*万)し、新たにnewBalを借りる
-  const B = planBlock({principal:newBal, rate:newRate, n:newN, extraCost:penalty});
-  $('outA').innerHTML = A.html;
-  $('outB').innerHTML = B.html;
+  // STEP2 頭金配分
+  const carPrice=+$('carPrice').value, fees=+$('fees').value;
+  const need = carPrice + fees; // 必要総額（万）
+  const range=$('downRange');
+  range.max = Math.max(0, Math.round(Math.min(handed, need)));
+  let down=+range.value;
+  if(down>+range.max){ down=+range.max; range.value=down; }
+  const keep = handed - down; // 手元に残る現金（万）
+  $('downLabel').textContent = down+' 万円';
+  $('keepLabel').textContent = man(keep)+' 万円';
+  $('keepWarn').classList.toggle('show', keep<100);
 
-  // 比較（総支払額。プランBは「一括返済原資として現残債分の現金を投入」する点に注意書き）
-  const diff = A.total - B.total;
-  let v;
-  if(diff>0){
-    v=`<div class="result-head"><strong>💡 判定</strong><span class="badge b-b">プランB有利</span></div>
-       <p>新ローンに組み替えると総支払額が <b class="net-pos">${yen(diff)} 円</b> 少なくなります（主に金利差 ${curRate}% → ${newRate}%）。</p>`;
-  } else if(diff<0){
-    v=`<div class="result-head"><strong>💡 判定</strong><span class="badge b-a">プランA有利</span></div>
-       <p>組み替えると逆に <b class="net-neg">${yen(-diff)} 円</b> 多く支払うことになります。金利・回数・手数料を見直してください。</p>`;
-  } else {
-    v=`<div class="result-head"><strong>💡 判定</strong></div><p>総支払額はほぼ同じです。</p>`;
-  }
-  v+=`<div class="note"><b>キャッシュの注意：</b>プランBは現ローン残債 ${curBal}万円を一旦“一括返済”するため、その原資（手元資金 or 別資金）が必要です。
-      上の比較は「同額を新ローンで借り直した場合の利息差」を示しています。手元資金で完済し新ローンを組まない場合は、利息0でもっとも支払総額は小さくなります（ただし手元現金は減少）。</div>`;
-  $('verdict').innerHTML = v;
+  const borrow = Math.max(0, need - down); // 借入（万）
+  const rate=+$('rate').value, months=+$('months').value;
+  const m = monthlyPay(borrow*10000, rate, months);
+  const total = m*months;
+  const interest = total - borrow*10000;
+  $('loanTable').innerHTML = `
+    <tr><td>新車 必要総額（車両${man(carPrice)}万＋諸費用${man(fees)}万）</td><td>${man(need)} 万</td></tr>
+    <tr><td>頭金（保険金の手残りから）</td><td class="net-pos">−${man(down)} 万</td></tr>
+    <tr class="row-strong"><td>新規借入額</td><td>${man(borrow)} 万円</td></tr>
+    <tr><td>月々の返済（${rate}%・${months}回）</td><td><b>${yen(m)} 円</b></td></tr>
+    <tr><td>総支払利息</td><td class="net-neg">${yen(interest)} 円</td></tr>
+    <tr class="row-sub"><td>手元に残る現金（生活防衛資金）</td><td>${man(keep)} 万円</td></tr>`;
 
-  // 全損早見表
-  const balA = balanceAfter(curBal*10000, curRate, curN, elapsed)/10000; // 万
-  const balB = balanceAfter(newBal*10000, newRate, newN, elapsed)/10000;
-  function lossRow(name, balMan, payoutMan, badge){
-    const net = payoutMan - MENSEKI - balMan; // 万
-    const cls = net>=0?'net-pos':'net-neg';
-    const sign = net>=0?'+':'−';
-    return `<tr>
-      <td>${name}</td>
-      <td>${man(payoutMan)} 万</td>
-      <td>−${MENSEKI} 万</td>
-      <td>${man(balMan)} 万</td>
-      <td class="${cls}"><b>${sign}${man(Math.abs(net))} 万円</b></td>
-    </tr>`;
-  }
-  let rows=`<tr><th>ケース</th><th>保険金</th><th>免責</th><th>事故時残債</th><th>手残り(完済後)</th></tr>`;
-  rows+=lossRow(`A・新車買替380万（${elapsed}ヶ月後）`, balA, SHINSHA);
-  rows+=lossRow(`A・現金受取330万（${elapsed}ヶ月後）`, balA, SHARYO);
-  rows+=lossRow(`B・新車買替380万（${elapsed}ヶ月後）`, balB, SHINSHA);
-  rows+=lossRow(`B・現金受取330万（${elapsed}ヶ月後）`, balB, SHARYO);
-  $('lossTable').innerHTML = rows;
+  // STEP3 等級ダウン将来コスト
+  const newPrem=+$('newPrem').value, premYears=+$('premYears').value;
+  const cur=111624;
+  const perYear = newPrem - cur;
+  const cumulative = perYear * premYears;
+  $('premTable').innerHTML = `
+    <tr><td>現在の年間保険料（8等級）</td><td>${yen(cur)} 円</td></tr>
+    <tr><td>事故後の年間保険料（5等級・事故有）</td><td>${yen(newPrem)} 円</td></tr>
+    <tr><td>年間の増加</td><td class="net-neg">+${yen(perYear)} 円 / 年</td></tr>
+    <tr class="row-strong"><td>${premYears}年累計の追加負担</td><td class="net-neg">−${yen(cumulative)} 円</td></tr>`;
+
+  // 結論：実質手残り
+  const realNet = handed*10000 - interest - cumulative; // 円（頭金は資産移転なので除外、利息と保険料増を実コストに）
+  const advice = payout===380
+    ? '同クラス新車を続ける前提なら、新車買替特約380万は現金330万より<b>+50万有利</b>です。'
+    : '現金330万受取は買い替え自由度が高い選択。<b>車格を下げて車両価格そのものを抑える</b>とトータル支出はさらに減ります。';
+  $('verdict').innerHTML = `
+    <div class="result-head"><strong>💡 実質ベースの最終判定</strong><span class="badge ${payout===380?'b-b':'b-a'}">${payout===380?'新車買替380万':'現金受取330万'}</span></div>
+    <table>
+      <tr><td>保険金の手残り（諸費用特約込・残債清算後）</td><td class="net-pos">+${man(handed)} 万円</td></tr>
+      <tr class="row-sub"><td>− 新ローンの総支払利息</td><td class="net-neg">−${yen(interest)} 円</td></tr>
+      <tr class="row-sub"><td>− 等級ダウン${premYears}年の保険料増</td><td class="net-neg">−${yen(cumulative)} 円</td></tr>
+      <tr class="row-strong"><td>実質的な手残り（利息・将来保険料増を控除）</td><td class="${realNet>=0?'net-pos':'net-neg'}">${realNet>=0?'+':'−'}${yen(Math.abs(realNet))} 円</td></tr>
+    </table>
+    <div class="note">${advice} ただし<b>等級ダウンの3年累計（${yen(cumulative)}円）と新ローン利息（${yen(interest)}円）</b>が将来の実コスト。手残りの満額を使い切らず、<b>新車価格は同等クラス（380万特約の範囲内）を上限の目安</b>に、過剰な車格アップを避けるのが家計を守る鉄則です。</div>`;
 }
 
 document.querySelectorAll('input').forEach(el=>el.addEventListener('input', calc));
+$('menZero').addEventListener('change', calc);
 calc();
 </script>
 </body>
